@@ -1,9 +1,9 @@
 export function getAppointmentsForDay(state, day) {
-  const appointmentsForDay = state.days.filter(elem => elem.name === day)
-  if (appointmentsForDay.length === 0) {
+  const appointmentsForDay = state.days.find(currDay => currDay.name === day)
+  if (!appointmentsForDay) {
     return []
   } else {
-    return appointmentsForDay[0].appointments.map(id => state.appointments[id])
+    return appointmentsForDay.appointments.map(id => state.appointments[id])
   }
 }
 
