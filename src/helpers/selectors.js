@@ -17,4 +17,11 @@ export function getInterview(state, interview) {
   }
 }  
 
-
+export function getInterviewersForDay(state, day) {
+  const interviewersForDay = state.days.find(currDay => currDay.name === day)
+  if (!interviewersForDay) {
+    return []
+  } else {
+    return interviewersForDay.interviewers.map(id => state.interviewers[id])
+  }
+}
