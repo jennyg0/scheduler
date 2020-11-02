@@ -13,11 +13,10 @@ function reducer(state, action) {
       return { ...state, day: action.day }
     case SET_APPLICATION_DATA:
       return { ...state, days: action.days, appointments: action.appointments, interviewers: action.interviewers }
-    case SET_INTERVIEW: {
-      return {...state, appointments: action.appointments }
-    }
+    case SET_INTERVIEW: 
+      return { ...state, appointments: action.appointments }
     case UPDATE:
-      return {...state, days: action.days}
+      return { ...state, days: action.days}
     default:
       throw new Error(
         `Tried to reduce with unsupported action type: ${action.type}`
