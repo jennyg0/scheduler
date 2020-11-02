@@ -5,6 +5,7 @@ const axios = require('axios');
 const SET_DAY = "SET_DAY";
 const SET_APPLICATION_DATA = "SET_APPLICATION_DATA";
 const SET_INTERVIEW = "SET_INTERVIEW";
+const UPDATE = "UPDATE";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -13,8 +14,10 @@ function reducer(state, action) {
     case SET_APPLICATION_DATA:
       return { ...state, days: action.days, appointments: action.appointments, interviewers: action.interviewers }
     case SET_INTERVIEW: {
-      return 
+      return {...state, appointments: action.appointments }
     }
+    case UPDATE:
+      return {...state, days: action.days}
     default:
       throw new Error(
         `Tried to reduce with unsupported action type: ${action.type}`
@@ -32,7 +35,7 @@ export default function useApplicationData() {
   //   interviewers: {}
   // });
 
-  const setDay = day => setState({ ...state, day });
+  const setDay = day => dispatch({ type: SET_DAY, day });
   
   function bookInterview(id, interview) {
     const appointment = {
@@ -43,7 +46,7 @@ export default function useApplicationData() {
       ...state.appointments,
       [id]: appointment
     };
-    return axios.put(`/api/appointments/${id}`, {interview}).then(() => setState({...state, appointments}))
+    return axios.put(`/api/appointments/${id}`, {interview}).then(() => dispatch({type: SET_INTERVIEW, appointments}))
   }
 
   function cancelInterview(appointmentId) {
@@ -55,7 +58,7 @@ export default function useApplicationData() {
       ...state.appointments, 
       [appointmentId]: appointment
     }
-    return axios.delete(`/api/appointments/${appointmentId}`).then(() => setState({...state, appointments}))
+    return axios.delete(`/api/appointments/${appointmentId}`).then(() => dispatch({type: SET_INTERVIEW, appointments}))
   }
 
   useEffect(() => {
@@ -64,7 +67,7 @@ export default function useApplicationData() {
       axios.get("api/appointments"),
       axios.get("api/interviewers")
     ]).then(([days, appointments, interviewers]) => { 
-      setState(prev => ({...prev, days: days.data, appointments: appointments.data, interviewers: interviewers.data}))
+      dispatch({ type: SET_APPLICATION_DATA, days : days.data, appointments: appointments.data, interviewers: interviewers.data});
     });
   }, [])
 
@@ -78,7 +81,7 @@ export default function useApplicationData() {
       }
       return days;
     })
-    setState(prev => ({...prev, days: updateSpots}))
+    dispatch(({type: UPDATE, days: updateSpots}))
 }, [state.appointments]) 
 
   return { state, setDay, bookInterview, cancelInterview }
