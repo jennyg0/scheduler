@@ -1,5 +1,4 @@
 export function getAppointmentsForDay(state, day) {
-  //console.log(state.days)
   const appointmentsForDay = state.days.find(currDay => currDay.name === day)
   if (!appointmentsForDay) {
     return []
@@ -19,7 +18,6 @@ export function getInterview(state, interview) {
 }  
 
 export function getInterviewersForDay(state, day) {
-  //console.log(state)
   const interviewersForDay = state.days.find(currDay => currDay.name === day)
   if (!interviewersForDay) {
     return []

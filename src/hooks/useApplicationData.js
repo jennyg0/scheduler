@@ -11,37 +11,14 @@ import reducer, {
 export default function useApplicationData() {
   const [state, dispatch] = useReducer(reducer, {day: "Monday", days: [], appointments: {}, interviewers: {}})
 
-  // const [state, setState] = useState({
-  //   day: "Monday",
-  //   days: [],
-  //   appointments: {}, 
-  //   interviewers: {}
-  // });
-
   const setDay = day => dispatch({ type: SET_DAY, day });
   
-  function bookInterview(id, interview) {
-    const appointment = {
-      ...state.appointments[id],
-      interview: { ...interview }
-    };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
-    return axios.put(`/api/appointments/${id}`, {interview}).then(() => dispatch({type: SET_INTERVIEW, appointments}))
+  function bookInterview(appointmentId, interview) {
+    return axios.put(`/api/appointments/${appointmentId}`, {interview}).then(() => dispatch({type: SET_INTERVIEW, interview, appointmentId}))
   }
 
   function cancelInterview(appointmentId) {
-    const appointment = {
-      ...state.appointments[appointmentId],
-      interview: null
-    };
-    const appointments = {
-      ...state.appointments, 
-      [appointmentId]: appointment
-    }
-    return axios.delete(`/api/appointments/${appointmentId}`).then(() => dispatch({type: SET_INTERVIEW, appointments}))
+    return axios.delete(`/api/appointments/${appointmentId}`).then(() =>  dispatch({type: SET_INTERVIEW, interview : null, appointmentId}))
   }
 
   useEffect(() => {
@@ -56,30 +33,25 @@ export default function useApplicationData() {
 
   //spots remaining: use apptforday fcn, filter the number of null interviews that day, replace the spot count for day, dependency when appointments state changes
   useEffect(() => {
-    const appointmentsForDay = getAppointmentsForDay(state, state.day)
-    const emptySpotsForDay = appointmentsForDay.filter(elem => elem.interview === null)
     const updateSpots = state.days.map(days => {
-      if (days.name === state.day) {
+      const appointmentsForDay = getAppointmentsForDay(state, days.name)
+      const emptySpotsForDay = appointmentsForDay.filter(elem => elem.interview === null)
+      if (days.name) {
         days.spots = emptySpotsForDay.length
       }
       return days;
     })
     dispatch(({type: UPDATE, days: updateSpots}))
-}, [state.appointments]) 
+  }, [state.appointments, state.day]) 
 
   useEffect(() => {
-    const socket = new WebSocket('ws://localhost:8001');
-    
-    // socket.addEventListener('open', function (event) {
-    //   socket.send('ping');
-    // });
-
+    const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
     socket.addEventListener('message', function (event) {
       const receivedMessage = JSON.parse(event.data)
-      console.log(receivedMessage)
+      const appointmentId = receivedMessage.id;
+      const interview = receivedMessage.interview
       if (receivedMessage.type === "SET_INTERVIEW") {
-        axios.get("/api/appointments").then((appointments) => dispatch({type: SET_INTERVIEW, appointments: appointments.data}))
-        //dispatch({type: SET_INTERVIEW, id: receivedMessage.id, interview: receivedMessage.interview})
+        dispatch({type: SET_INTERVIEW, interview, appointmentId})
       }
     });
   }, [])
