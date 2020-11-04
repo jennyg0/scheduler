@@ -36,9 +36,8 @@ export default function useApplicationData() {
     const updateSpots = state.days.map(days => {
       const appointmentsForDay = getAppointmentsForDay(state, days.name)
       const emptySpotsForDay = appointmentsForDay.filter(elem => elem.interview === null)
-      if (days.name) {
-        days.spots = emptySpotsForDay.length
-      }
+      days.spots = emptySpotsForDay.length
+      
       return days;
     })
     dispatch(({type: UPDATE, days: updateSpots}))
