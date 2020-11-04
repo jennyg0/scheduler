@@ -67,5 +67,22 @@ export default function useApplicationData() {
     dispatch(({type: UPDATE, days: updateSpots}))
 }, [state.appointments]) 
 
+  useEffect(() => {
+    const socket = new WebSocket('ws://localhost:8001');
+    
+    // socket.addEventListener('open', function (event) {
+    //   socket.send('ping');
+    // });
+
+    socket.addEventListener('message', function (event) {
+      const receivedMessage = JSON.parse(event.data)
+      console.log(receivedMessage)
+      if (receivedMessage.type === "SET_INTERVIEW") {
+        axios.get("/api/appointments").then((appointments) => dispatch({type: SET_INTERVIEW, appointments: appointments.data}))
+        //dispatch({type: SET_INTERVIEW, id: receivedMessage.id, interview: receivedMessage.interview})
+      }
+    });
+  }, [])
+
   return { state, setDay, bookInterview, cancelInterview }
 }

@@ -3,9 +3,6 @@ import InterviewerListItem from './InterviewerListItem';
 import "components/InterviewerList.scss";
 import PropTypes from 'prop-types';
 
-
-const classNames = require('classnames');
-
 function InterviewerList(props) {
   const interviewerList = props.interviewers.map(interviewer => {
     
