@@ -21,8 +21,8 @@ npm test
 ```sh
 npm run storybook
 ```
-![appointment form]https://github.com/jennyg0/scheduler/blob/master/docs/appointment-form.jpeg?raw=true
+![appointment form](https://github.com/jennyg0/scheduler/blob/master/docs/appointment-form.jpeg?raw=true)
 
-![add appointment]https://github.com/jennyg0/scheduler/blob/master/docs/add-appointment.png?raw=true
+![add appointment](https://github.com/jennyg0/scheduler/blob/master/docs/add-appointment.png?raw=true)
 
-![delete appointment]https://github.com/jennyg0/scheduler/blob/master/docs/delete-appointment.png?raw=true
+![delete appointment](https://github.com/jennyg0/scheduler/blob/master/docs/delete-appointment.png?raw=true)
